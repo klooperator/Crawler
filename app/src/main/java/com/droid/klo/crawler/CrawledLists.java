@@ -7,9 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TabHost;
 
 /**
  * Created by prpa on 3/12/17.
@@ -19,6 +18,7 @@ public class CrawledLists extends Fragment {
 
     //region globals
     private static String TAG = "CrawledList";
+    public int bttn_count;
     //endregion
 
     @Nullable
@@ -26,7 +26,9 @@ public class CrawledLists extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.v(TAG,"[cl]...onCreateView");
         View view = inflater.inflate(R.layout.latest_list,container, false);
-        view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        //view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+
+        bttn_count = 0;
 
         return view;
     }
@@ -34,9 +36,41 @@ public class CrawledLists extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Button bttn_add = (Button)getActivity().findViewById(R.id.bttn_add_new);
+        bttn_add.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                addButton();
+            }
+        });
 
-        //region tab init
-        TabHost host = (TabHost)getActivity().findViewById(R.id.tabHost_lists);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    public void addButton(){
+        Button bttn = new Button(getActivity());
+        bttn.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        bttn.setText("bttn"+bttn_count);
+        bttn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle b= new Bundle();
+                b.putString("message", "bttn"+bttn_count);
+                ListData ld = new ListData();
+                ld.setArguments(b);
+                getActivity().getFragmentManager().beginTransaction().replace(R.id.placeholder,ld,"ld"+bttn_count).commit();
+            }
+        });
+        LinearLayout ll = (LinearLayout) getActivity().findViewById(R.id.layout_search_list);
+        ll.addView(bttn, 0);
+        bttn_count++;
+    }
+}
+//region tab init
+       /* TabHost host = (TabHost)getActivity().findViewById(R.id.tabHost_lists);
         host.setup();
 
         for(int i=0; i<5;i++){
@@ -46,7 +80,7 @@ public class CrawledLists extends Fragment {
             spec.setIndicator("Tab"+i);
             host.addTab(spec);
         }
-        /*//Tab 1
+        //Tab 1
         TabHost.TabSpec spec = host.newTabSpec("Tab One");
         ListView list = new ListView(getActivity());
         //spec.setContent(R.id.tab2);
@@ -59,11 +93,4 @@ public class CrawledLists extends Fragment {
         spec.setIndicator("Tab Two");
         host.addTab(spec);*/
 
-        //endregion
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-}
+//endregion
