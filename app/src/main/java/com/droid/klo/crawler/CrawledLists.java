@@ -42,6 +42,7 @@ public class CrawledLists extends Fragment {
                 addButton();
             }
         });
+		
 
     }
 
@@ -61,13 +62,23 @@ public class CrawledLists extends Fragment {
                 b.putString("message", "bttn"+bttn_count);
                 ListData ld = new ListData();
                 ld.setArguments(b);
-                getActivity().getFragmentManager().beginTransaction().replace(R.id.placeholder,ld,"ld"+bttn_count).commit();
+                getActivity().getFragmentManager().beginTransaction().replace(R.id.placeholder,ld,"ld"+bttn_count).addToBackStack("ld"+bttn_count).commit();
+				((MainActivity)getActivity()).addBackButton();
             }
         });
         LinearLayout ll = (LinearLayout) getActivity().findViewById(R.id.layout_search_list);
         ll.addView(bttn, 0);
         bttn_count++;
     }
+
+	@Override
+	public void onResume()
+	{
+		((MainActivity)getActivity()).dissableToolbarBack();
+		super.onResume();
+	}
+	
+	
 }
 //region tab init
        /* TabHost host = (TabHost)getActivity().findViewById(R.id.tabHost_lists);
