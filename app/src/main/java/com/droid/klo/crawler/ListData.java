@@ -22,7 +22,7 @@ public class ListData extends Fragment {
         String myValue = this.getArguments().getString("message");
 
     }
-    
+
 
     @Nullable
     @Override

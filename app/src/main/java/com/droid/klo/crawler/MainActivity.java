@@ -40,7 +40,8 @@ public class MainActivity extends AppCompatActivity {
 	}
 	
 	public void dissableToolbarBack(){
-		actionBar.setDefaultDisplayHomeAsUpEnabled(false);
+		//actionBar.setDefaultDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		}
 
 }
