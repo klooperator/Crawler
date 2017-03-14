@@ -1,8 +1,9 @@
 package com.droid.klo.crawler;
 
-import android.os.*;
-import android.support.v7.app.*;
-import android.support.v7.widget.*;
+import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 
 
 
