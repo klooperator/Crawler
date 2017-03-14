@@ -2,6 +2,7 @@ package com.droid.klo.crawler;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.widget.*;
 
 /**
  * Created by prpa on 3/13/17.
@@ -14,6 +15,7 @@ public class ListData extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String myValue = this.getArguments().getString("message");
+		LinearLayout ll=new LinearLayout(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
     }
 
     @Override

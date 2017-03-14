@@ -27,7 +27,7 @@ public class CrawledLists extends Fragment {
         Log.v(TAG,"[cl]...onCreateView");
         View view = inflater.inflate(R.layout.latest_list,container, false);
         //view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-
+		((MainActivity)getActivity()).dissableToolbarBack();
         bttn_count = 0;
 
         return view;
@@ -74,7 +74,8 @@ public class CrawledLists extends Fragment {
 	@Override
 	public void onResume()
 	{
-		((MainActivity)getActivity()).dissableToolbarBack();
+		Log.d("cl","onResume");
+		
 		super.onResume();
 	}
 	
