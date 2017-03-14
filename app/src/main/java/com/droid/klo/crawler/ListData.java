@@ -2,7 +2,12 @@ package com.droid.klo.crawler;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.widget.*;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 /**
  * Created by prpa on 3/13/17.
@@ -15,7 +20,24 @@ public class ListData extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String myValue = this.getArguments().getString("message");
-		LinearLayout ll=new LinearLayout(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
+
+    }
+    
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        LinearLayout ll=new LinearLayout(getActivity());
+        ll.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        Button bttn = new Button(getActivity());
+        bttn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).dissableToolbarBack();
+            }
+        });
+        ll.addView(bttn);
+        return ll;
     }
 
     @Override
