@@ -6,4 +6,5 @@
     <string name="link_pretrage">Dodaj link po kojem ce se vršit pretraga</string>
     <string name="top_value">Ignoriraj iznad ove cijene</string>
     <string name="bot_value">Ignoriraj ispod ove cijene</string>
+    <string name="save">Spremi</string>
 </resources>

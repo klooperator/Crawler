@@ -17,8 +17,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final int DB_VERSION = 1;
     public static final String DB_NAME = "klo_crawler_db";
-    public static final String TABLE_SOURCE_NAME = "t_source";
-    public static final String TABLE_RESULTS_NAME = "t_results";
+
+
 
     //TABLE_SOURCE columns
     private static final String CS_ID = "_id";
@@ -38,28 +38,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
-
-    //create statements
-    private static String CREATE_TABLE_SOURCE =
-            "CREATE TABLE " + TABLE_SOURCE_NAME + "( " +
-                    CS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    CS_NAME + " TEXT NOT NULL, " +
-                    CS_LINK + " TEXT NOT NULL, " +
-                    CS_BOTTOM_VALUE + " INTEGER, " +
-                    CS_TOP_VALUE + " INTEGER" +
-             ");";
-    private static final String CREATE_TABLE_RESULTS =
-            "CREATE TABLE " + TABLE_RESULTS_NAME + " ( " +
-                    CR_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    CR_SOURCE_ID + " INTEGER, " +
-                    CR_TITLE + " TEXT NOT NULL, " +
-                    CR_CONTENT + " TEXT, " +
-                    CR_PHONE_NUMBER + " TEXT NOT NULL, " +
-                    CR_PRICE + " INT, " +
-                    CR_TIME + " TEXT, " +
-                    "FOREIGN KEY (" + CR_SOURCE_ID + ") REFERENCES " + TABLE_SOURCE_NAME + "(" +CS_ID + ")" +
-                    ");";
-
     public DBHelper(Context context) {
         super(context, DB_NAME, null,  DB_VERSION);
     }
@@ -69,8 +47,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "onCreate()");
         try {
-            db.execSQL(CREATE_TABLE_SOURCE);
-            db.execSQL(CREATE_TABLE_RESULTS);
+            db.execSQL(Source.CREATE_TABLE_SOURCE);
+            db.execSQL(Result.CREATE_TABLE_RESULTS);
         }catch (SQLException e){
             Log.e(TAG,"error: "+ e);
         }

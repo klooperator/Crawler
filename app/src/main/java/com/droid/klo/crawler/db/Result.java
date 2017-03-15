@@ -15,6 +15,9 @@ public class Result {
     private String time;
     private int price;
 
+    //table
+    public static final String TABLE_RESULTS_NAME = "t_results";
+
     //TABLE_RESULTS columns
     public static final String ID = "_id"; //int autoincrement
     public static final String SOURCE_ID = "_source_id"; //int foreign key
@@ -23,6 +26,19 @@ public class Result {
     public static final String CONTENT = "result_content"; //text
     public static final String PRICE = "result_price"; //int
     public static final String TIME = "result_time"; //text
+
+    //create statements
+    public static final String CREATE_TABLE_RESULTS =
+            "CREATE TABLE " + TABLE_RESULTS_NAME + " ( " +
+                    ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    SOURCE_ID + " INTEGER, " +
+                    TITLE + " TEXT NOT NULL, " +
+                    CONTENT + " TEXT, " +
+                    PHONE_NUMBER + " TEXT NOT NULL, " +
+                    PRICE + " INT, " +
+                    TIME + " TEXT, " +
+                    "FOREIGN KEY (" + SOURCE_ID + ") REFERENCES " + Source.TABLE_SOURCE_NAME + "(" +Source.ID + ")" +
+                    ");";
     //endregion
 
     //region getters setters

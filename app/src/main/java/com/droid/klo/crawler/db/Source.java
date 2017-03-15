@@ -13,6 +13,9 @@ public class Source {
     private int top_value;
     private int bottom_value;
 
+    //table
+    public static final String TABLE_SOURCE_NAME = "t_source";
+
     //TABLE_SOURCE columns
     public static final String ID = "_id";
     public static final String NAME = "source_name"; //text
@@ -21,6 +24,16 @@ public class Source {
     public static final String BOTTOM_VALUE = "source_bottom_value"; //int
 
     public static final String[] sourceColumns = {NAME, LINK, TOP_VALUE, BOTTOM_VALUE};
+
+    //create statements
+    public static String CREATE_TABLE_SOURCE =
+            "CREATE TABLE " + TABLE_SOURCE_NAME + "( " +
+                    ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    NAME + " TEXT NOT NULL, " +
+                    LINK + " TEXT NOT NULL, " +
+                    BOTTOM_VALUE + " INTEGER, " +
+                    TOP_VALUE + " INTEGER" +
+                    ");";
     //endregion
 
     //region getters setters

@@ -70,4 +70,11 @@
         android:layout_weight="0.0"
         android:background="@color/white"/>
 
+    <Button
+        android:text="@string/save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_save_source"
+        android:layout_weight="0.0" />
+
 </LinearLayout>
