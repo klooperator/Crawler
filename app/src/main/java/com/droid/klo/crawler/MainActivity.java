@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.*;
 
+import com.droid.klo.crawler.db.Dao;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -20,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
 		actionBar=getSupportActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(false);
+		Dao dao = new Dao(this);
+		dao.open();
 		
 
         getFragmentManager().beginTransaction().replace(R.id.placeholder,new CrawledLists(),"cl").commit();
