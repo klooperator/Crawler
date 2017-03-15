@@ -12,6 +12,7 @@ import com.droid.klo.crawler.db.Dao;
 public class MainActivity extends AppCompatActivity {
 	
 	ActionBar actionBar;
+	Dao dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
 		actionBar=getSupportActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(false);
-		Dao dao = new Dao(this);
+		dao = new Dao(this);
 		dao.open();
 		
 
@@ -46,5 +47,7 @@ public class MainActivity extends AppCompatActivity {
 		//actionBar.setDefaultDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		}
-
+	public Dao getDao(){
+		return this.dao;
+	}
 }

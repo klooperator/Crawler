@@ -36,6 +36,22 @@ public class Source {
                     ");";
     //endregion
 
+    //region Constructors
+    public Source(){}
+    public Source(String name, String link, int top_value, int bottom_value){
+        this.name=name;
+        this.link=link;
+        this.top_value=top_value;
+        this.bottom_value=bottom_value;
+    }
+    public Source(String name, String link){
+        this.name=name;
+        this.link=link;
+        this.top_value=-1;
+        this.bottom_value=-1;
+    }
+    //endregion
+
     //region getters setters
     public long getId() {
         return id;

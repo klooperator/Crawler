@@ -46,7 +46,7 @@ public class Dao {
 
 
         // Inserting Row
-        return db.insert(DBHelper.TABLE_SOURCE_NAME, null, values);
+        return db.insert(Source.TABLE_SOURCE_NAME, null, values);
     }
 
     public long insertResult(Result r){
@@ -58,13 +58,13 @@ public class Dao {
         values.put(r.PRICE, r.getPrice());
         values.put(r.TIME, r.getTime());
 
-        return db.insert(DBHelper.TABLE_RESULTS_NAME,null,values);
+        return db.insert(Result.TABLE_RESULTS_NAME,null,values);
     }
 
     public List<Source> getSources(){
         List<Source> s = new ArrayList<Source>();
 
-        Cursor c = db.query(DBHelper.TABLE_SOURCE_NAME, Source.sourceColumns, null,null,null,null,null);
+        Cursor c = db.query(Source.TABLE_SOURCE_NAME, Source.sourceColumns, null,null,null,null,null);
         c.moveToFirst();
         while(!c.isAfterLast()){
             Source temp = new Source();
@@ -78,5 +78,9 @@ public class Dao {
         }
         c.close();
         return s;
+    }
+
+    public boolean isOpen(){
+        return db.isOpen();
     }
 }

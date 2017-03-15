@@ -15,7 +15,7 @@ public class DBHelper extends SQLiteOpenHelper {
     //region class variables
     private static final String TAG = "DBHelper";
 
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
     public static final String DB_NAME = "klo_crawler_db";
 
 
@@ -49,6 +49,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
             db.execSQL(Source.CREATE_TABLE_SOURCE);
             db.execSQL(Result.CREATE_TABLE_RESULTS);
+            db.execSQL(ExcludeUsers.CREATE_TABLE_EXCLUDE);
         }catch (SQLException e){
             Log.e(TAG,"error: "+ e);
         }
@@ -58,6 +59,11 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w(TAG, "onUpgrade DB");
+
+        db.execSQL("DROP TABLE IF EXISTS " + Source.TABLE_SOURCE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + Result.TABLE_RESULTS_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + ExcludeUsers.TABLE_EXCLUDE_NAME);
+        onCreate(db);
     }
 
 
