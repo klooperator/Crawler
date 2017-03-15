@@ -77,6 +77,7 @@ public class AddSourceFragment extends Fragment {
                     else{
                         dao.open();
                         dao.insertSource(s);
+                        getActivity().onBackPressed();
                     }
                 }
 
