@@ -34,6 +34,13 @@ public class AddSourceFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.add_source,container, false);
 
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         Button bttn_save = (Button) getActivity().findViewById(R.id.button_save_source);
         bttn_save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,21 +58,21 @@ public class AddSourceFragment extends Fragment {
                 TextView txt_bottom_value=(TextView) getActivity().findViewById(R.id.source_bottom_value);
 
 
-                if(txt_name.getText()==""){
+                if((txt_name.getText().toString()).matches("")){
                     txt_name.setBackgroundResource(redError);
                     name=null;
                 }else name=txt_name.getText().toString();
 
-                if(txt_link.getText()==""){
+                if((txt_link.getText().toString()).matches("")){
                     txt_link.setBackgroundResource(redError);
                     link=null;
                 }else link=txt_link.getText().toString();
 
-                if(txt_top_value.getText()==""){
+                if((txt_top_value.getText().toString()).matches("")){
                     top_val=-1;
                 }else top_val=Integer.parseInt(txt_top_value.getText().toString());
 
-                if(txt_bottom_value.getText()==""){
+                if((txt_bottom_value.getText().toString()).matches("")){
                     bot_val=-1;
                 }else bot_val=Integer.parseInt(txt_bottom_value.getText().toString());
 
@@ -73,7 +80,10 @@ public class AddSourceFragment extends Fragment {
                 else{
                     s = new Source(name,link,top_val,bot_val);
                     Dao dao=((MainActivity)getActivity()).getDao();
-                    if(dao.isOpen())dao.insertSource(s);
+                    if(dao.isOpen()){
+                        dao.insertSource(s);
+                        getActivity().onBackPressed();
+                    }
                     else{
                         dao.open();
                         dao.insertSource(s);
@@ -84,12 +94,6 @@ public class AddSourceFragment extends Fragment {
 
             }
         });
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override

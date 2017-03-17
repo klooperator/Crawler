@@ -27,6 +27,8 @@ public class Result {
     public static final String PRICE = "result_price"; //int
     public static final String TIME = "result_time"; //text
 
+    public static final String[] resultColumns = {ID,SOURCE_ID, PHONE_NUMBER, TITLE, CONTENT,PRICE,TIME};
+
     //create statements
     public static final String CREATE_TABLE_RESULTS =
             "CREATE TABLE " + TABLE_RESULTS_NAME + " ( " +

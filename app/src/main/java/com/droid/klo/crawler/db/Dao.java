@@ -30,6 +30,7 @@ public class Dao {
     public void open(){
         Log.d(TAG, "open()");
         db = myHelper.getWritableDatabase();
+
     }
 
     public void close(){
@@ -66,9 +67,10 @@ public class Dao {
 
         Cursor c = db.query(Source.TABLE_SOURCE_NAME, Source.sourceColumns, null,null,null,null,null);
         c.moveToFirst();
+        Log.d(TAG, "ID index:" + c.getColumnIndex(Source.ID));
         while(!c.isAfterLast()){
             Source temp = new Source();
-            temp.setId(c.getLong(c.getColumnIndex(Source.ID)));
+            temp.setId(c.getInt(c.getColumnIndex(Source.ID)));
             temp.setName(c.getString(c.getColumnIndex(Source.NAME)));
             temp.setLink(c.getString(c.getColumnIndex(Source.LINK)));
             temp.setTop_value(c.getInt(c.getColumnIndex(Source.TOP_VALUE)));

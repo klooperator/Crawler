@@ -23,7 +23,7 @@ public class Source {
     public static final String TOP_VALUE = "source_top_value"; //int
     public static final String BOTTOM_VALUE = "source_bottom_value"; //int
 
-    public static final String[] sourceColumns = {NAME, LINK, TOP_VALUE, BOTTOM_VALUE};
+    public static final String[] sourceColumns = {ID,NAME, LINK, TOP_VALUE, BOTTOM_VALUE};
 
     //create statements
     public static String CREATE_TABLE_SOURCE =

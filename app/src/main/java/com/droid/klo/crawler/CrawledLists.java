@@ -10,6 +10,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.droid.klo.crawler.db.Dao;
+import com.droid.klo.crawler.db.Source;
+
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Created by prpa on 3/12/17.
  */
@@ -39,9 +45,21 @@ public class CrawledLists extends Fragment {
         Button bttn_add = (Button)getActivity().findViewById(R.id.bttn_add_new);
         bttn_add.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                addButton();
+                ((MainActivity)getActivity()).addBackButton();
+                getActivity().getFragmentManager().beginTransaction().replace(R.id.placeholder,new AddSourceFragment(),"add_source").addToBackStack("add_source").commit();
+
             }
         });
+
+        Dao dao = ((MainActivity)getActivity()).getDao();
+        if(!dao.isOpen()){
+            dao.open();
+        }
+        List<Source> sources = dao.getSources();
+        for(Iterator<Source> i =sources.iterator(); i.hasNext();){
+            Source s = i.next();
+            addButton(s.getName());
+        }
 		
 
     }
@@ -51,10 +69,10 @@ public class CrawledLists extends Fragment {
         super.onStart();
     }
 
-    public void addButton(){
+    public void addButton(String text){
         Button bttn = new Button(getActivity());
         bttn.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        bttn.setText("bttn"+bttn_count);
+        bttn.setText(text);
         bttn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

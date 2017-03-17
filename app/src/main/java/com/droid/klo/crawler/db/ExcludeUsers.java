@@ -17,7 +17,7 @@ public class ExcludeUsers {
     public static final String CREATE_TABLE_EXCLUDE =
             "CREATE TABLE " + TABLE_EXCLUDE_NAME + " ( " +
                     ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    USER + " TEXT, " +
+                    USER + " TEXT" +
                     ");";
 
     //endregion

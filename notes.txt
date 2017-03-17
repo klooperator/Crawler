@@ -1,0 +1,6 @@
+Options:
+-start/stop crawl
+-wifi/3g crawl (crawl only on wifi)
+-saved data for Xdays
+-clean data(default 3:00)
+-crawl rate (default 5min)
