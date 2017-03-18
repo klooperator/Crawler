@@ -41,20 +41,47 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
 		actionBar=getSupportActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(false);
+
+
 		dao = new Dao(this);
 		dao.open();
 
 		initOptions();
         chekcPref();
+
+
         getFragmentManager().beginTransaction().replace(R.id.placeholder,new CrawledLists(),"cl").commit();
 		startService(new Intent(this, CrawlerService.class));
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG,"onStart");
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG,"onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG,"onDestroy");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG,"onRestart");
+    }
+
+    @Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG,"onOptionsItemSelected");
 		if(item.getItemId() == android.R.id.home){
 			onBackPressed();
 		}
@@ -65,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 	//region custom methods
 
 	private boolean initOptions(){
-		SharedPreferences pref = getPreferences(this.MODE_PRIVATE);
+		SharedPreferences pref = getSharedPreferences("test",this.MODE_PRIVATE);
 		if(pref.getBoolean(FIRST_RUN,false) == false){
 			SharedPreferences.Editor editor = pref.edit();
 			editor.putBoolean(SERVICE_SHOULD_RUN, true);
@@ -74,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
 			editor.putInt(CLEAN_DATA_TIME,3);
 			editor.putInt(SAVE_DATA_FOR_NUMBER_OF_DAYS,1);
 			editor.putBoolean(FIRST_RUN,true);
+            editor.commit();
 			return true;
 		}else return true;
 
@@ -92,8 +120,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void chekcPref(){
-        SharedPreferences pref = getPreferences(this.MODE_PRIVATE);
-        Log.d(TAG,"pref: "+pref.getInt(CRAWL_MIN_RATE,0));
+        SharedPreferences pref = getSharedPreferences("test",this.MODE_PRIVATE);
+        Log.v(TAG,"pref: "+pref.getInt(CRAWL_MIN_RATE,0));
     }
 	//endregion
 }

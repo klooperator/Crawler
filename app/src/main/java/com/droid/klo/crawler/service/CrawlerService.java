@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -46,10 +45,12 @@ public class CrawlerService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        Log.d(TAG, "onBind");
         return null;
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand");
         count = 0;
         return Service.START_STICKY;
     }
@@ -57,11 +58,12 @@ public class CrawlerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d(TAG, "onCreate");
 
-        pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        //pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        pref = getApplicationContext().getSharedPreferences("test",getApplicationContext().MODE_PRIVATE);
 
-
-        handler = new Handler();
+                handler = new Handler();
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -75,11 +77,13 @@ public class CrawlerService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
+        Log.d(TAG, "onUnbind");
         return super.onUnbind(intent);
     }
 
     @Override
     public void onDestroy() {
+        Log.d(TAG, "onDestroy");
         super.onDestroy();
     }
 
