@@ -1,10 +1,15 @@
 package com.droid.klo.crawler.db;
 
+import android.net.Uri;
+import android.provider.BaseColumns;
+
+import com.droid.klo.crawler.contentProvider.CP;
+
 /**
  * Created by prpa on 3/15/17.
  */
 
-public class Source {
+public class Source implements BaseColumns{
 
     //region variabels
     private long id;
@@ -13,11 +18,12 @@ public class Source {
     private int top_value;
     private int bottom_value;
 
+
     //table
     public static final String TABLE_SOURCE_NAME = "t_source";
 
     //TABLE_SOURCE columns
-    public static final String ID = "_id";
+    public static final String ID = "_ID";
     public static final String NAME = "source_name"; //text
     public static final String LINK = "source_link"; //text
     public static final String TOP_VALUE = "source_top_value"; //int
@@ -34,6 +40,9 @@ public class Source {
                     BOTTOM_VALUE + " INTEGER, " +
                     TOP_VALUE + " INTEGER" +
                     ");";
+
+    //URIs
+    public static final Uri CONTENT_URI = CP.BASE_CONTENT_URI.buildUpon().appendPath(TABLE_SOURCE_NAME).build();
     //endregion
 
     //region Constructors

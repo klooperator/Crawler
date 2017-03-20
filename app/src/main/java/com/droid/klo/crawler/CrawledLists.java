@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import com.droid.klo.crawler.db.Dao;
+import com.droid.klo.crawler.contentProvider.DaoCP;
 import com.droid.klo.crawler.db.Source;
 
 import java.util.Iterator;
@@ -30,7 +30,7 @@ public class CrawledLists extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.v(TAG,"[cl]...onCreateView");
+        Log.v(TAG,"onCreateView");
         View view = inflater.inflate(R.layout.latest_list,container, false);
         //view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
 		((MainActivity)getActivity()).dissableToolbarBack();
@@ -41,6 +41,7 @@ public class CrawledLists extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        Log.v(TAG,"onViewCreated");
         super.onViewCreated(view, savedInstanceState);
         Button bttn_add = (Button)getActivity().findViewById(R.id.bttn_add_new);
         bttn_add.setOnClickListener(new View.OnClickListener() {
@@ -51,12 +52,9 @@ public class CrawledLists extends Fragment {
             }
         });
 
-        Dao dao = ((MainActivity)getActivity()).getDao();
-        if(!dao.isOpen()){
-            dao.open();
-        }
+        DaoCP dao = new DaoCP(getActivity());
         List<Source> sources = dao.getSources();
-        for(Iterator<Source> i =sources.iterator(); i.hasNext();){
+        for(Iterator<Source> i = sources.iterator(); i.hasNext();){
             Source s = i.next();
             addButton(s.getName());
         }
@@ -66,6 +64,7 @@ public class CrawledLists extends Fragment {
 
     @Override
     public void onStart() {
+        Log.v(TAG,"onStart");
         super.onStart();
     }
 
@@ -92,7 +91,7 @@ public class CrawledLists extends Fragment {
 	@Override
 	public void onResume()
 	{
-		Log.d("cl","onResume");
+		Log.d(TAG,"onResume");
 		
 		super.onResume();
 	}

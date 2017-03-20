@@ -8,9 +8,11 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.droid.klo.crawler.contentProvider.DaoCP;
 import com.droid.klo.crawler.db.Dao;
 import com.droid.klo.crawler.db.Source;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -60,10 +62,17 @@ public class CrawlerService extends Service {
         super.onCreate();
         Log.d(TAG, "onCreate");
 
-        //pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         pref = getApplicationContext().getSharedPreferences("test",getApplicationContext().MODE_PRIVATE);
 
-                handler = new Handler();
+        DaoCP dao = new DaoCP(this);
+        List<Source> sources = dao.getSources();
+        for(Iterator<Source> i = sources.iterator(); i.hasNext();){
+            Source s = i.next();
+            Log.v(TAG, s.getName());
+        }
+
+
+        /*handler = new Handler();
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -72,7 +81,7 @@ public class CrawlerService extends Service {
             }
 
         };
-        handler.post(runnable);
+        handler.post(runnable);*/
     }
 
     @Override

@@ -1,5 +1,9 @@
 package com.droid.klo.crawler.db;
 
+import android.net.Uri;
+
+import com.droid.klo.crawler.contentProvider.CP;
+
 /**
  * Created by prpa on 3/15/17.
  */
@@ -19,7 +23,7 @@ public class Result {
     public static final String TABLE_RESULTS_NAME = "t_results";
 
     //TABLE_RESULTS columns
-    public static final String ID = "_id"; //int autoincrement
+    public static final String ID = "_ID"; //int autoincrement
     public static final String SOURCE_ID = "_source_id"; //int foreign key
     public static final String PHONE_NUMBER = "result_phone_number"; // text
     public static final String TITLE = "result_title";//text
@@ -42,6 +46,8 @@ public class Result {
                     "FOREIGN KEY (" + SOURCE_ID + ") REFERENCES " + Source.TABLE_SOURCE_NAME + "(" +Source.ID + ")" +
                     ");";
     //endregion
+
+    public static final Uri CONTENT_URI = CP.BASE_CONTENT_URI.buildUpon().appendPath(TABLE_RESULTS_NAME).build();
 
     //region getters setters
     public long getId() {

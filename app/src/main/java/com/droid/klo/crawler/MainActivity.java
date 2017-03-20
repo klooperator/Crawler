@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 		dao = new Dao(this);
-		dao.open();
+		//dao.open();
 
 		initOptions();
         chekcPref();

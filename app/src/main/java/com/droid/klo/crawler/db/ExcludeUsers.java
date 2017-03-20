@@ -1,5 +1,9 @@
 package com.droid.klo.crawler.db;
 
+import android.net.Uri;
+
+import com.droid.klo.crawler.contentProvider.CP;
+
 /**
  * Created by prpa on 3/15/17.
  */
@@ -7,7 +11,7 @@ package com.droid.klo.crawler.db;
 public class ExcludeUsers {
 
     //region variables
-    public static final String ID = "_id";
+    public static final String ID = "_ID";
     public static final String USER = "user";
 
     //table
@@ -19,6 +23,9 @@ public class ExcludeUsers {
                     ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     USER + " TEXT" +
                     ");";
+
+    //URIs
+    public static final Uri CONTENT_URI = CP.BASE_CONTENT_URI.buildUpon().appendPath(TABLE_EXCLUDE_NAME).build();
 
     //endregion
 }

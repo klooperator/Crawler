@@ -3,13 +3,14 @@ package com.droid.klo.crawler;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.droid.klo.crawler.db.Dao;
+import com.droid.klo.crawler.contentProvider.DaoCP;
 import com.droid.klo.crawler.db.Source;
 
 import static com.droid.klo.crawler.R.color.redError;
@@ -27,12 +28,14 @@ public class AddSourceFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.add_source,container, false);
+        Log.d(TAG, "onCreateView");
 
 
         return view;
@@ -41,6 +44,7 @@ public class AddSourceFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.d(TAG, "onViewCreated");
         Button bttn_save = (Button) getActivity().findViewById(R.id.button_save_source);
         bttn_save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,16 +83,9 @@ public class AddSourceFragment extends Fragment {
                 if(name==null || link==null)return;
                 else{
                     s = new Source(name,link,top_val,bot_val);
-                    Dao dao=((MainActivity)getActivity()).getDao();
-                    if(dao.isOpen()){
-                        dao.insertSource(s);
-                        getActivity().onBackPressed();
-                    }
-                    else{
-                        dao.open();
-                        dao.insertSource(s);
-                        getActivity().onBackPressed();
-                    }
+                    DaoCP dao = new DaoCP(getActivity());
+                    dao.insertSource(s);
+                    getActivity().onBackPressed();
                 }
 
 
@@ -98,11 +95,13 @@ public class AddSourceFragment extends Fragment {
 
     @Override
     public void onStart() {
+        Log.d(TAG, "onStart");
         super.onStart();
     }
 
     @Override
     public void onResume() {
+        Log.d(TAG, "onResume");
         super.onResume();
     }
 }
