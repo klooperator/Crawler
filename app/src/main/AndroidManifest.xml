@@ -19,6 +19,9 @@
         <service
             android:name=".service.CrawlerService"
             android:process=":kloService">
+            <intent-filter>
+                <action android:name="klo.aidl.service" />
+            </intent-filter>
         </service>
         <provider
             android:authorities="com.droid.klo.crawler.provider.CP"

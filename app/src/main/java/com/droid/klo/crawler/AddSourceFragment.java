@@ -85,7 +85,9 @@ public class AddSourceFragment extends Fragment {
                     s = new Source(name,link,top_val,bot_val);
                     DaoCP dao = new DaoCP(getActivity());
                     dao.insertSource(s);
+                    ((MainActivity)getActivity()).updateService();
                     getActivity().onBackPressed();
+
                 }
 
 

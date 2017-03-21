@@ -1,15 +1,19 @@
 package com.droid.klo.crawler;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 
-import com.droid.klo.crawler.db.Dao;
 import com.droid.klo.crawler.service.CrawlerService;
 
 
@@ -27,8 +31,9 @@ public class MainActivity extends AppCompatActivity {
 	private static final String SAVE_DATA_FOR_NUMBER_OF_DAYS = "save_for_days";//int, days, DEFAULT=1
 
 
-	ActionBar actionBar;
-	Dao dao;
+	private ActionBar actionBar;
+	private ICrawlAIDE mAidlStub;
+
 	//endregion
 
 	//region Overrides
@@ -43,8 +48,6 @@ public class MainActivity extends AppCompatActivity {
 		actionBar.setDisplayHomeAsUpEnabled(false);
 
 
-		dao = new Dao(this);
-		//dao.open();
 
 		initOptions();
         chekcPref();
@@ -58,12 +61,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+		bindToService();
         Log.d(TAG,"onStart");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        unbindService(mConnection);
         Log.d(TAG,"onStop");
     }
 
@@ -114,14 +119,53 @@ public class MainActivity extends AppCompatActivity {
 		//actionBar.setDefaultDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		}
-	public Dao getDao(){
-		return this.dao;
-	}
+
 
 
     public void chekcPref(){
         SharedPreferences pref = getSharedPreferences("test",this.MODE_PRIVATE);
         Log.v(TAG,"pref: "+pref.getInt(CRAWL_MIN_RATE,0));
     }
+	//endregion
+
+	//region AIDL
+	private void bindToService(){
+		Log.d(TAG,"bindToService");
+		//Log.d(TAG,ICrawlAIDE.class.getName());
+		//Log.d(TAG,getPackageName());
+		//Log.d(TAG,CrawlerService.class.getPackage().toString());
+		//Intent i = new Intent(this, CrawlerService.class);
+		Intent i = new Intent(this, CrawlerService.class);
+		i.setAction("klo.aidl.service");
+		//i.setPackage(CrawlerService.class.getPackage().getName());
+		bindService(i,mConnection, Context.BIND_AUTO_CREATE);
+	}
+	private ServiceConnection mConnection = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			Log.d(TAG,"onServiceConnected");
+			mAidlStub = ICrawlAIDE.Stub.asInterface(service);
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			Log.d(TAG,"onServiceDisconnected");
+		}
+	};
+	public void updateService(){
+		Log.d(TAG,"updateService");
+		//bindToService();
+		if(mAidlStub != null){
+			try {
+				mAidlStub.updateServer("something something tralala...");
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}else{
+			//bindToService();
+			//updateService();
+			Log.d(TAG,"updateService/mAidlStub == null");
+		}
+	}
 	//endregion
 }

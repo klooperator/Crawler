@@ -41,6 +41,7 @@ public class DaoCP {
     }
 
     public void insertSource(Source s){
+        Log.d(TAG, "insertSource()");
         ContentValues values = new ContentValues();
         values.put(s.NAME, s.getName()); // name
         values.put(s.LINK, s.getLink()); // name
@@ -53,6 +54,7 @@ public class DaoCP {
     }
 
     public void insertResult(Result r){
+        Log.d(TAG, "insertResult()");
         ContentValues values = new ContentValues();
         values.put(r.SOURCE_ID, r.getSource_id());
         values.put(r.TITLE, r.getTitle());
@@ -65,6 +67,7 @@ public class DaoCP {
     }
 
     public List<Source> getSources(){
+        Log.d(TAG, "getSources()");
         List<Source> s = new ArrayList<Source>();
         /*Cursor query (Uri uri,
                 String[] projection,

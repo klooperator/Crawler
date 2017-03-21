@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.droid.klo.crawler.ICrawlAIDE;
 import com.droid.klo.crawler.contentProvider.DaoCP;
 import com.droid.klo.crawler.db.Dao;
 import com.droid.klo.crawler.db.Source;
@@ -23,9 +25,10 @@ public class CrawlerService extends Service {
 
     //region variables
     public static final String TAG = "CrawlerService";
-    private int count;
 
-    Handler handler;
+    private Handler handler;
+    private int runCounter;
+    private Runnable runnable;
 
     private List<String> excluded;
     private List<Source> sourceList;
@@ -48,12 +51,12 @@ public class CrawlerService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "onBind");
-        return null;
+        return mBinder;
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand");
-        count = 0;
+        runCounter = 0;
         return Service.START_STICKY;
     }
 
@@ -72,16 +75,18 @@ public class CrawlerService extends Service {
         }
 
 
-        /*handler = new Handler();
-        final Runnable runnable = new Runnable() {
+        handler = new Handler();
+        runnable = new Runnable() {
             @Override
             public void run() {
                 Log.v(TAG, "run n. " + pref.getInt(CRAWL_MIN_RATE,0));
-                handler.postDelayed(this, 10000);
+                runCounter++;
+                if(runCounter<10)handler.postDelayed(this, 10000);
             }
 
         };
-        handler.post(runnable);*/
+        handler.post(runnable);
+
     }
 
     @Override
@@ -95,6 +100,25 @@ public class CrawlerService extends Service {
         Log.d(TAG, "onDestroy");
         super.onDestroy();
     }
+
+    private void updateServis(String s){
+        Log.d(TAG, "AIDL = "+ s);
+        runCounter=0;
+        handler.post(runnable);
+    }
+
+    private final ICrawlAIDE.Stub mBinder = new ICrawlAIDE.Stub() {
+        @Override
+        public void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat, double aDouble, String aString) throws RemoteException {
+
+        }
+
+        @Override
+        public void updateServer(String s) throws RemoteException {
+            Log.d("ICrawlAIDE/updateServer", "received: " + s);
+            updateServis(s);
+        }
+    };
 
 
 }
