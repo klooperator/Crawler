@@ -11,11 +11,11 @@ import android.util.Log;
 
 import com.droid.klo.crawler.ICrawlAIDE;
 import com.droid.klo.crawler.contentProvider.DaoCP;
-import com.droid.klo.crawler.db.Dao;
 import com.droid.klo.crawler.db.Source;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by prpa on 3/16/17.
@@ -32,7 +32,7 @@ public class CrawlerService extends Service {
 
     private List<String> excluded;
     private List<Source> sourceList;
-    private Dao dao;
+    private DaoCP dao;
     private int crawlRate;
     private SharedPreferences pref;
 
@@ -79,9 +79,17 @@ public class CrawlerService extends Service {
         runnable = new Runnable() {
             @Override
             public void run() {
-                Log.v(TAG, "run n. " + pref.getInt(CRAWL_MIN_RATE,0));
+                Log.v(TAG, "run n. " + runCounter);
                 runCounter++;
-                if(runCounter<10)handler.postDelayed(this, 10000);
+                JSoupMain js = new JSoupMain("http://www.njuskalo.hr/iphone-7-plus",getApplicationContext());
+                try {
+                    js.parse();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if(runCounter<2)handler.postDelayed(this, 10000);
             }
 
         };
