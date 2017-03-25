@@ -24,16 +24,19 @@ import java.util.concurrent.ExecutionException;
  * Created by prpa on 3/21/17.
  */
 
-public class JSoupMain {
+public class JSoupMain implements Runnable {
 
     //region varibles
     private final static String TAG = "JSoupMain";
-    private String url;
-    private List<String> usareAgentList;
+    private Source source;
     private int userAgentNumber;
+    private String pickedUA;
     private Context context;
+    private List<String> lastResults;
+    private List<String> newResults;
+    private List<String> excludedUsers;
     //region user agent array
-    private String[] uaArray = {
+    private static final String[] uaArray = {
             //source : https://deviceatlas.com/blog/list-of-user-agent-strings
             "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",//googlebot
             "Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)",//bing bot
@@ -65,47 +68,35 @@ public class JSoupMain {
         Log.d(TAG, "constructor.");
         init();
     }
-    public JSoupMain(String url){
+    //TODO neznam dal treba
+    public JSoupMain(Source source){
         Log.d(TAG, "constructor..");
         init();
-        this.url = url;
     }
-    public JSoupMain(String url,Context context){
+    //TODO neznam dal treba
+    public JSoupMain(Context context, Source source){
         Log.d(TAG, "constructor..");
         init();
-        this.url = url;
         this.context = context;
     }
-    public JSoupMain(String url, int userAgentNumber){
+
+    public JSoupMain(Context context, Source source, List<String> latestResults, int userAgentNumber){
         Log.d(TAG, "constructor...");
         init();
-        this.url = url;
-        this.userAgentNumber = userAgentNumber;
+        this.lastResults = latestResults;
+        this.source = source;
+        this.pickedUA = uaArray[userAgentNumber];
     }
 
+    //TODO neznam dal treba
     private void init(){
         Log.d(TAG, "init");
-        this.usareAgentList = new ArrayList<String>();
+        pickedUA = uaArray[new Random().nextInt(uaArray.length)];
+
     }
     //endregion
 
     //region getters/setters
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public List<String> getUsareAgentList() {
-        return usareAgentList;
-    }
-
-    public void setUsareAgentList(List<String> usareAgentList) {
-        this.usareAgentList = usareAgentList;
-    }
-
     public int getUserAgentNumber() {
         return userAgentNumber;
     }
@@ -114,12 +105,62 @@ public class JSoupMain {
         this.userAgentNumber = userAgentNumber;
     }
 
-    public void  addoUsareAgentList(String newUsareAgent){
-        this.usareAgentList.add(newUsareAgent);
+    public static int randomUA(){
+       return new Random().nextInt(uaArray.length);
     }
+
+
     //endregion
 
+
+    @Override
+    public void run() {
+        //getting new links
+        try {
+            Document docS = new GetDoc().execute(new String[]{this.source.getLink(), this.pickedUA}).get();
+            Elements uls = docS.select(".EntityList--Regular > ul");
+            for (Element el : uls){
+                Elements lis = el.getElementsByTag("li");
+                for(Element li : lis){
+                    if(!li.hasClass("EntityList--VauVau") && !li.hasClass("EntityList--banner")) {
+                        String a = li.getElementsByTag("a").attr("href").toString();
+                        if(!this.lastResults.contains(a)){
+                            this.newResults.add(a);
+                        }
+                    }else if(this.source.getVauvau() == 1  && !li.hasClass("EntityList--banner")){
+                        String a = li.getElementsByTag("a").attr("href").toString();
+                        if(!this.lastResults.contains(a)) {
+                            this.newResults.add(a);
+                        }
+                    }
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        //get new results
+        for(String link : this.newResults){
+            try {
+                Document docR = new GetDoc().execute(new String[]{"http://www.njuskalo.hr"+link, this.pickedUA}).get();
+                Element titleEl = docR.select("base-entity-title > h1").first();
+                String title = titleEl.text();
+                Element priceEl = docR.select("price price--hrk").first();
+                String price = priceEl.text();
+                Element phoneel = docR.select("link-tel--alpha").first();
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
     //region methods
+    //TODO neznam dal treba
     public void parse() throws ExecutionException, InterruptedException {
         DaoCP dao = new DaoCP(context);
         List<Source> l = dao.getSources();
@@ -127,25 +168,15 @@ public class JSoupMain {
             Source s = i.next();
             Log.v(TAG, s.getName());
         }
-        Connection connection = Jsoup.connect(url);
+        //Connection connection = Jsoup.connect(url);
         String userAgent = uaArray[new Random().nextInt(uaArray.length)];
-        connection.userAgent(userAgent);
+        //connection.userAgent(userAgent);
         Log.v(TAG, "user agent: " + userAgent);
-        Document doc = new GetDoc().execute(new String[]{url, userAgent}).get();
+        //Document doc = new GetDoc().execute(new String[]{url, userAgent}).get();
         //Log.v(TAG,doc.html());
-        Elements uls = doc.select(".EntityList--Regular > ul");
+        //Elements uls = doc.select(".EntityList--Regular > ul");
         List<String> aList = new ArrayList<String>();
-        for (Element el : uls){
-            Log.v(TAG, el.outerHtml());
-            Elements lis = el.getElementsByTag("li");
-            for(Element li : lis){
-                if(!li.hasClass("EntityList--VauVau") && !li.hasClass("EntityList--banner")) {
 
-                    String a = li.getElementsByTag("a").attr("href").toString();
-                    Log.w(TAG, a);
-                }
-            }
-        }
 
 
 

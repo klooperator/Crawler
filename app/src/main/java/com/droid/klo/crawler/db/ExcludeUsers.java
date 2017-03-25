@@ -13,9 +13,13 @@ public class ExcludeUsers {
     //region variables
     public static final String ID = "_ID";
     public static final String USER = "user";
+    public static final String SOURCE = "source";
 
     //table
     public static final String TABLE_EXCLUDE_NAME = "t_result";
+
+    //all columns
+    public static final String[] excludedUsersColumns = {ID, USER, SOURCE};
 
     //create statements
     public static final String CREATE_TABLE_EXCLUDE =

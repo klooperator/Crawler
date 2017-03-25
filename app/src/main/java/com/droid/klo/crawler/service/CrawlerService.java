@@ -13,9 +13,9 @@ import com.droid.klo.crawler.ICrawlAIDE;
 import com.droid.klo.crawler.contentProvider.DaoCP;
 import com.droid.klo.crawler.db.Source;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by prpa on 3/16/17.
@@ -27,14 +27,16 @@ public class CrawlerService extends Service {
     public static final String TAG = "CrawlerService";
 
     private Handler handler;
-    private int runCounter;
+    private int runTime;
     private Runnable runnable;
+    private List<Runnable> runList;
 
     private List<String> excluded;
     private List<Source> sourceList;
     private DaoCP dao;
     private int crawlRate;
     private SharedPreferences pref;
+    private boolean canIRun;
 
     //options
     private static final String FIRST_RUN = "initialized";//Bool, special
@@ -56,7 +58,6 @@ public class CrawlerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand");
-        runCounter = 0;
         return Service.START_STICKY;
     }
 
@@ -65,36 +66,26 @@ public class CrawlerService extends Service {
         super.onCreate();
         Log.d(TAG, "onCreate");
 
-        pref = getApplicationContext().getSharedPreferences("test",getApplicationContext().MODE_PRIVATE);
-
-        DaoCP dao = new DaoCP(this);
-        List<Source> sources = dao.getSources();
-        for(Iterator<Source> i = sources.iterator(); i.hasNext();){
-            Source s = i.next();
-            Log.v(TAG, s.getName());
-        }
+        runList = new ArrayList<Runnable>();
+        initService();
 
 
         handler = new Handler();
         runnable = new Runnable() {
             @Override
             public void run() {
-                Log.v(TAG, "run n. " + runCounter);
-                runCounter++;
-                JSoupMain js = new JSoupMain("http://www.njuskalo.hr/iphone-7-plus",getApplicationContext());
-                try {
-                    js.parse();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                if(canIRun){
+                    int count = 0;
+                    for(Runnable r : runList){
+                        handler.postDelayed(r, 20000*count);
+                        count++;
+                    }
+                    handler.postDelayed(this, runTime*60*1000);
+                }else{
+                    initService();
                 }
-                if(runCounter<2)handler.postDelayed(this, 10000);
             }
-
         };
-        handler.post(runnable);
-
     }
 
     @Override
@@ -111,7 +102,6 @@ public class CrawlerService extends Service {
 
     private void updateServis(String s){
         Log.d(TAG, "AIDL = "+ s);
-        runCounter=0;
         handler.post(runnable);
     }
 
@@ -127,6 +117,22 @@ public class CrawlerService extends Service {
             updateServis(s);
         }
     };
+
+    private void initService(){
+        pref = getApplicationContext().getSharedPreferences("test",getApplicationContext().MODE_PRIVATE);
+        runTime = pref.getInt(CRAWL_MIN_RATE, 5);
+
+        DaoCP dao = new DaoCP(this);
+        int userAgent = JSoupMain.randomUA();
+        List<Source> sources = dao.getSources();
+        for(Iterator<Source> i = sources.iterator(); i.hasNext();){
+            Source s = i.next();
+            List<String> lastLinks = dao.getLasLinks(s.getId());
+            Log.v(TAG, s.getName());
+            runList.add(new JSoupMain(this, s, lastLinks, userAgent));
+        }
+
+    }
 
 
 }

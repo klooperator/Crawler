@@ -17,6 +17,7 @@ public class Source implements BaseColumns{
     private String link;
     private int top_value;
     private int bottom_value;
+    private int vauvau;
 
 
     //table
@@ -28,8 +29,9 @@ public class Source implements BaseColumns{
     public static final String LINK = "source_link"; //text
     public static final String TOP_VALUE = "source_top_value"; //int
     public static final String BOTTOM_VALUE = "source_bottom_value"; //int
+    public static final String VAU = "vauvau";
 
-    public static final String[] sourceColumns = {ID,NAME, LINK, TOP_VALUE, BOTTOM_VALUE};
+    public static final String[] sourceColumns = {ID,NAME, LINK, TOP_VALUE, BOTTOM_VALUE, VAU};
 
     //create statements
     public static String CREATE_TABLE_SOURCE =
@@ -38,7 +40,8 @@ public class Source implements BaseColumns{
                     NAME + " TEXT NOT NULL, " +
                     LINK + " TEXT NOT NULL, " +
                     BOTTOM_VALUE + " INTEGER, " +
-                    TOP_VALUE + " INTEGER" +
+                    TOP_VALUE + " INTEGER, " +
+                    VAU + " INTEGER" +
                     ");";
 
     //URIs
@@ -47,17 +50,20 @@ public class Source implements BaseColumns{
 
     //region Constructors
     public Source(){}
-    public Source(String name, String link, int top_value, int bottom_value){
+    public Source(int id, String name, String link, int top_value, int bottom_value, int vauau){
         this.name=name;
         this.link=link;
         this.top_value=top_value;
         this.bottom_value=bottom_value;
+        this.vauvau=vauau;
+        this.id=id;
     }
     public Source(String name, String link){
         this.name=name;
         this.link=link;
         this.top_value=-1;
         this.bottom_value=-1;
+        this.vauvau=0;
     }
     //endregion
 
@@ -101,5 +107,14 @@ public class Source implements BaseColumns{
     public void setBottom_value(int bottom_value) {
         this.bottom_value = bottom_value;
     }
+
+    public int getVauvau() {
+        return vauvau;
+    }
+
+    public void setVauvau(int vauvau) {
+        this.vauvau = vauvau;
+    }
+
     //endregion
 }

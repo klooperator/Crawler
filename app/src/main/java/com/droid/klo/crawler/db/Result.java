@@ -30,8 +30,10 @@ public class Result {
     public static final String CONTENT = "result_content"; //text
     public static final String PRICE = "result_price"; //int
     public static final String TIME = "result_time"; //text
+    public static final String ORIGINAL_LINK = "original_link";
+    public static final String LINK = "link";
 
-    public static final String[] resultColumns = {ID,SOURCE_ID, PHONE_NUMBER, TITLE, CONTENT,PRICE,TIME};
+    public static final String[] resultColumns = {ID,SOURCE_ID, PHONE_NUMBER, TITLE, CONTENT,PRICE,TIME, ORIGINAL_LINK, LINK};
 
     //create statements
     public static final String CREATE_TABLE_RESULTS =
@@ -43,6 +45,8 @@ public class Result {
                     PHONE_NUMBER + " TEXT NOT NULL, " +
                     PRICE + " INT, " +
                     TIME + " TEXT, " +
+                    ORIGINAL_LINK + " TEXT, "+
+                    LINK + " TEXT, " +
                     "FOREIGN KEY (" + SOURCE_ID + ") REFERENCES " + Source.TABLE_SOURCE_NAME + "(" +Source.ID + ")" +
                     ");";
     //endregion

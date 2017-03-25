@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
+import com.droid.klo.crawler.db.ExcludeUsers;
 import com.droid.klo.crawler.db.Result;
 import com.droid.klo.crawler.db.Source;
 
@@ -81,7 +82,6 @@ public class DaoCP {
         String[] mSelectionArgs = null;
         String mSortOrder = null;
 
-
         Cursor c = context.getContentResolver().query(mTableName, mProjection,mSelection,mSelectionArgs,mSortOrder);
         c.moveToFirst();
         while(!c.isAfterLast()){
@@ -91,8 +91,46 @@ public class DaoCP {
             temp.setLink(c.getString(c.getColumnIndex(Source.LINK)));
             temp.setTop_value(c.getInt(c.getColumnIndex(Source.TOP_VALUE)));
             temp.setBottom_value(c.getInt(c.getColumnIndex(Source.BOTTOM_VALUE)));
+            temp.setVauvau(c.getInt(c.getColumnIndex(Source.VAU)));
             s.add(temp);
             c.moveToNext();
+        }
+
+        return s;
+    }
+
+    public List<String> getLasLinks(long sourceID){
+        List<String> s = new ArrayList<String>();
+
+        Uri mTableName = CP.URI_RESULT;
+        String[] mProjection = Result.resultColumns;
+        String mSelection = Result.SOURCE_ID+"=?";
+        String[] mSelctionArgs = new String[]{Long.toString(sourceID)};
+        String mSortOrder = Result.ID + " DESC";
+        String mLimit = "20";
+
+        Cursor c = context.getContentResolver().query(mTableName, mProjection, mSelection, mSelctionArgs, mSortOrder + "LIMIT 20");
+        c.moveToFirst();
+        while(!c.isAfterLast()){
+            s.add(c.getString(c.getColumnIndex(Result.ORIGINAL_LINK)));
+        }
+        return s;
+    }
+
+    public List<String> getExcludedList(long sourceID){
+        List<String> s = new ArrayList<String>();
+
+        Uri mTableName = CP.URI_EXCLUDE;
+        String[] mProjection = ExcludeUsers.excludedUsersColumns;
+        String mSelection = null;
+        String[] mSelectionArgs =null;
+        String mSortOrder = null;
+        String mLimit = null;
+
+        Cursor c = context.getContentResolver().query(mTableName, mProjection,mSelection,mSelectionArgs,mSortOrder);
+        c.moveToFirst();
+        while(!c.isAfterLast()){
+            s.add(c.getString(c.getColumnIndex(ExcludeUsers.USER)));
         }
 
         return s;

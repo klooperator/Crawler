@@ -70,7 +70,11 @@ public class CP extends ContentProvider {
         Log.d(TAG, "query");
         switch (getUriMatcher().match(uri)){
             case RESULT_TABLE:
-
+                try{
+                    return db.query(Result.TABLE_RESULTS_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                }catch (Exception e){
+                    Log.e(TAG, e.getLocalizedMessage(),e);
+                }
                 break;
             case SOURCE_TABLE:
                 try{
@@ -80,7 +84,11 @@ public class CP extends ContentProvider {
                 }
                 break;
             case EXCLUDE_TABLE:
-
+                try{
+                    return db.query(Source.TABLE_SOURCE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                }catch (Exception e){
+                    Log.e(TAG, e.getLocalizedMessage(),e);
+                }
                 break;
             case RESULT_TABLE_ID:
 
@@ -94,6 +102,8 @@ public class CP extends ContentProvider {
         }
         return null;
     }
+
+
 
     @Nullable
     @Override

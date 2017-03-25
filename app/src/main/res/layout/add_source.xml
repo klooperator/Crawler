@@ -70,6 +70,16 @@
         android:layout_weight="0.0"
         android:background="@color/white"/>
 
+    <ToggleButton
+        android:id="@+id/vauvau"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.0"
+        android:checked="false"
+        android:text="@string/vauvau"
+        android:textOff="@string/vauvau"
+        android:textOn="@string/vauvau" />
+
     <Button
         android:text="@string/save"
         android:layout_width="match_parent"

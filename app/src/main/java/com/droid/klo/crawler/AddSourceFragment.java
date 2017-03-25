@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.droid.klo.crawler.contentProvider.DaoCP;
 import com.droid.klo.crawler.db.Source;
@@ -54,13 +55,18 @@ public class AddSourceFragment extends Fragment {
                 String link;
                 int top_val;
                 int bot_val;
+                int vauvau;
                 Source s=null;
 
                 TextView txt_name=(TextView) getActivity().findViewById(R.id.source_name);
                 TextView txt_link=(TextView) getActivity().findViewById(R.id.source_link);
                 TextView txt_top_value=(TextView) getActivity().findViewById(R.id.source_top_value);
                 TextView txt_bottom_value=(TextView) getActivity().findViewById(R.id.source_bottom_value);
+                ToggleButton vau_toggle= (ToggleButton) getActivity().findViewById((R.id.vauvau));
 
+
+                if(vau_toggle.isChecked())vauvau=1;
+                else vauvau=0;
 
                 if((txt_name.getText().toString()).matches("")){
                     txt_name.setBackgroundResource(redError);
@@ -82,7 +88,7 @@ public class AddSourceFragment extends Fragment {
 
                 if(name==null || link==null)return;
                 else{
-                    s = new Source(name,link,top_val,bot_val);
+                    s = new Source(name,link,top_val,bot_val,vauvau);
                     DaoCP dao = new DaoCP(getActivity());
                     dao.insertSource(s);
                     ((MainActivity)getActivity()).updateService();
