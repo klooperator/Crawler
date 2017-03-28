@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.droid.klo.crawler.contentProvider.DaoCP;
+import com.droid.klo.crawler.db.Result;
 import com.droid.klo.crawler.db.Source;
 
 import org.jsoup.Connection;
@@ -83,9 +84,11 @@ public class JSoupMain implements Runnable {
     public JSoupMain(Context context, Source source, List<String> latestResults, int userAgentNumber){
         Log.d(TAG, "constructor...");
         init();
+        newResults = new ArrayList<String>();
         this.lastResults = latestResults;
         this.source = source;
         this.pickedUA = uaArray[userAgentNumber];
+        this.context = context;
     }
 
     //TODO neznam dal treba
@@ -115,20 +118,26 @@ public class JSoupMain implements Runnable {
 
     @Override
     public void run() {
+        Log.d(TAG, "run("+source.getName()+")");
         //getting new links
+        DaoCP dao = new DaoCP(context);
+        this.lastResults = dao.getLastLinks(this.source.getId());
         try {
             Document docS = new GetDoc().execute(new String[]{this.source.getLink(), this.pickedUA}).get();
             Elements uls = docS.select(".EntityList--Regular > ul");
             for (Element el : uls){
-                Elements lis = el.getElementsByTag("li");
+                //Elements lis = el.getElementsByTag("li");
+                Elements lis = el.getElementsByClass("js-EntityList-item--Regular");
+                Log.d(TAG, "numbe of li's: "+lis.size());
                 for(Element li : lis){
                     if(!li.hasClass("EntityList--VauVau") && !li.hasClass("EntityList--banner")) {
-                        String a = li.getElementsByTag("a").attr("href").toString();
+                        Element linkEl = li.getElementsByTag("a").first();
+                        String a = li.getElementsByTag("a").first().attr("href");
                         if(!this.lastResults.contains(a)){
                             this.newResults.add(a);
                         }
                     }else if(this.source.getVauvau() == 1  && !li.hasClass("EntityList--banner")){
-                        String a = li.getElementsByTag("a").attr("href").toString();
+                        String a = li.getElementsByTag("a").first().attr("href").toString();
                         if(!this.lastResults.contains(a)) {
                             this.newResults.add(a);
                         }
@@ -141,21 +150,55 @@ public class JSoupMain implements Runnable {
             e.printStackTrace();
         }
         //get new results
+        List<Result> resaults = new ArrayList<Result>();
         for(String link : this.newResults){
             try {
-                Document docR = new GetDoc().execute(new String[]{"http://www.njuskalo.hr"+link, this.pickedUA}).get();
-                Element titleEl = docR.select("base-entity-title > h1").first();
-                String title = titleEl.text();
-                Element priceEl = docR.select("price price--hrk").first();
-                String price = priceEl.text();
-                Element phoneel = docR.select("link-tel--alpha").first();
+                if(!link.contentEquals("")) {
+                    Document docR = new GetDoc().execute(new String[]{"http://www.njuskalo.hr" + link, this.pickedUA}).get();
+                    Element titleEl = docR.select(".base-entity-title").first();
+                    Element phoneEl = docR.select(".link-tel--alpha").first();
+                    Element contentEl = docR.select(".base-entity-description").first();
+                    Element priceEl = docR.select(".price--hrk").first();
+                    Element sellerEl = docR.select(".Profile-username").first();
+
+                    //debug
+                    if (contentEl == null) {
+                        Log.d(TAG, "contentEL == null");
+                        Log.d(TAG, docR.html());
+                    }
+
+                    Result r = new Result();
+
+                    r.setPhone_number(phoneEl.text());
+                    r.setPrice(Integer.parseInt(priceEl.text().replaceAll("\\D+", "")));
+                    r.setTitle(titleEl.text());
+                    r.setSeller(sellerEl.text());
+                    r.setContent(contentEl.text());
+                    r.setLink("http://www.njuskalo.hr" + link);
+                    r.setOriginalLink(link);
+                    r.setSource_id(this.source.getId());
+                    r.setTime(System.currentTimeMillis());
+
+                    Log.v(TAG, source.getName() + " :" + r.getLink() + "[" + r.getTitle() + "]");
+                    Log.i(TAG, r.getSeller() + " [" + r.getPhone_number() + "]");
+                    Log.d(TAG, r.getPrice() + " KN");
+
+                    resaults.add(r);
+                }else{
+                        Log.e(TAG, "link == " + link);
+                    }
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
                 e.printStackTrace();
+            }catch (NullPointerException e){
+                Log.e(TAG, "negdje je null, link je: " + link);
+                e.printStackTrace();
             }
-        }
+        }if(context==null)Log.d(TAG, "context je null");
+        //DaoCP dao = new DaoCP(this.context);
+        dao.insertResults(resaults);
 
     }
 
@@ -190,6 +233,7 @@ public class JSoupMain implements Runnable {
 
         @Override
         protected Document doInBackground(String... params) {
+            Log.d(TAG, "GetDoc/doInBackground: "+params[0]);
             Connection connection = Jsoup.connect(params[0]);
             connection.userAgent(params[1]);
             Document doc = null;

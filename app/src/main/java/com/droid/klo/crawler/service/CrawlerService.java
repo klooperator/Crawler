@@ -65,27 +65,29 @@ public class CrawlerService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate");
-
-        runList = new ArrayList<Runnable>();
-        initService();
+        canIRun = false;
 
 
         handler = new Handler();
         runnable = new Runnable() {
             @Override
             public void run() {
+                Log.d(TAG, "runnable/run()");
+                initService();
                 if(canIRun){
                     int count = 0;
                     for(Runnable r : runList){
                         handler.postDelayed(r, 20000*count);
                         count++;
                     }
-                    handler.postDelayed(this, runTime*60*1000);
+                    handler.postDelayed(this, 60*1000);
                 }else{
                     initService();
                 }
             }
         };
+        initService();
+
     }
 
     @Override
@@ -102,7 +104,8 @@ public class CrawlerService extends Service {
 
     private void updateServis(String s){
         Log.d(TAG, "AIDL = "+ s);
-        handler.post(runnable);
+        canIRun=false;
+        initService();
     }
 
     private final ICrawlAIDE.Stub mBinder = new ICrawlAIDE.Stub() {
@@ -119,19 +122,24 @@ public class CrawlerService extends Service {
     };
 
     private void initService(){
+        Log.d(TAG, "initService");
         pref = getApplicationContext().getSharedPreferences("test",getApplicationContext().MODE_PRIVATE);
         runTime = pref.getInt(CRAWL_MIN_RATE, 5);
+        runList = new ArrayList<Runnable>();
 
         DaoCP dao = new DaoCP(this);
         int userAgent = JSoupMain.randomUA();
         List<Source> sources = dao.getSources();
         for(Iterator<Source> i = sources.iterator(); i.hasNext();){
             Source s = i.next();
-            List<String> lastLinks = dao.getLasLinks(s.getId());
+            List<String> lastLinks = dao.getLastLinks(s.getId());
             Log.v(TAG, s.getName());
-            runList.add(new JSoupMain(this, s, lastLinks, userAgent));
+            runList.add(new JSoupMain(getApplicationContext(), s, lastLinks, userAgent));
         }
-
+        if(!canIRun){
+            canIRun=true;
+            handler.post(runnable);
+        }
     }
 
 

@@ -16,8 +16,11 @@ public class Result {
     private String title;
     private String content;
     private String phone_number;
-    private String time;
+    private long time;
     private int price;
+    private String seller;
+    private String link;
+    private String originalLink;
 
     //table
     public static final String TABLE_RESULTS_NAME = "t_results";
@@ -29,11 +32,12 @@ public class Result {
     public static final String TITLE = "result_title";//text
     public static final String CONTENT = "result_content"; //text
     public static final String PRICE = "result_price"; //int
+    public static final String SELLER = "seller";//text
     public static final String TIME = "result_time"; //text
     public static final String ORIGINAL_LINK = "original_link";
     public static final String LINK = "link";
 
-    public static final String[] resultColumns = {ID,SOURCE_ID, PHONE_NUMBER, TITLE, CONTENT,PRICE,TIME, ORIGINAL_LINK, LINK};
+    public static final String[] resultColumns = {ID,SOURCE_ID, PHONE_NUMBER, TITLE, CONTENT,PRICE,SELLER,TIME, ORIGINAL_LINK, LINK};
 
     //create statements
     public static final String CREATE_TABLE_RESULTS =
@@ -42,9 +46,10 @@ public class Result {
                     SOURCE_ID + " INTEGER, " +
                     TITLE + " TEXT NOT NULL, " +
                     CONTENT + " TEXT, " +
+                    SELLER + " TEXT, " +
                     PHONE_NUMBER + " TEXT NOT NULL, " +
                     PRICE + " INT, " +
-                    TIME + " TEXT, " +
+                    TIME + " INT, " +
                     ORIGINAL_LINK + " TEXT, "+
                     LINK + " TEXT, " +
                     "FOREIGN KEY (" + SOURCE_ID + ") REFERENCES " + Source.TABLE_SOURCE_NAME + "(" +Source.ID + ")" +
@@ -94,11 +99,11 @@ public class Result {
         this.phone_number = phone_number;
     }
 
-    public String getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(long time) {
         this.time = time;
     }
 
@@ -109,5 +114,30 @@ public class Result {
     public void setPrice(int price) {
         this.price = price;
     }
-    //endregion
+
+    public String getSeller() {
+        return seller;
+    }
+
+    public void setSeller(String seller) {
+        this.seller = seller;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public String getOriginalLink() {
+        return originalLink;
+    }
+
+    public void setOriginalLink(String originalLink) {
+        this.originalLink = originalLink;
+    }
+
+//endregion
 }

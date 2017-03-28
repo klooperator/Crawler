@@ -58,9 +58,10 @@ public class CP extends ContentProvider {
     public boolean onCreate() {
         Log.d(TAG, "onCreate");
         myHelper = new DBHelper(getContext());
-        Log.d(TAG, "onCreate/myHelper= "+myHelper.toString());
         db = myHelper.getWritableDatabase();
+        Log.d(TAG, "onCreate/myHelper= "+myHelper.toString());
         Log.d(TAG, "onCreate/db= "+db.toString());
+
         return true;
     }
 
@@ -68,24 +69,31 @@ public class CP extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         Log.d(TAG, "query");
+        //db = myHelper.getWritableDatabase();
         switch (getUriMatcher().match(uri)){
             case RESULT_TABLE:
                 try{
-                    return db.query(Result.TABLE_RESULTS_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                    Cursor c = db.query(Result.TABLE_RESULTS_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                    //db.close();
+                    return c;
                 }catch (Exception e){
                     Log.e(TAG, e.getLocalizedMessage(),e);
                 }
                 break;
             case SOURCE_TABLE:
                 try{
-                    return db.query(Source.TABLE_SOURCE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                    Cursor c = db.query(Source.TABLE_SOURCE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                    //db.close();
+                    return c;
                 }catch (Exception e){
                     Log.e(TAG, e.getLocalizedMessage(),e);
                 }
                 break;
             case EXCLUDE_TABLE:
                 try{
-                    return db.query(Source.TABLE_SOURCE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                    Cursor c = db.query(Source.TABLE_SOURCE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                    //db.close();
+                    return c;
                 }catch (Exception e){
                     Log.e(TAG, e.getLocalizedMessage(),e);
                 }
@@ -116,11 +124,13 @@ public class CP extends ContentProvider {
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         Log.d(TAG, "insert");
+        //db = myHelper.getWritableDatabase();
         switch (getUriMatcher().match(uri)){
             case RESULT_TABLE:
                 Log.d(TAG, "insert/(case)RESULT_TABLE");
                 try{
                     long _id = db.insert(Result.TABLE_RESULTS_NAME, null, values);
+                    //db.close();
                     return ContentUris.withAppendedId(URI_SOURCE, _id);
                 }catch (Exception e){
                     Log.e(TAG, e.getLocalizedMessage(),e);
@@ -135,6 +145,7 @@ public class CP extends ContentProvider {
                 Log.d(TAG, "insert/(case)SOURCE_TABLE");
                 try{
                     long _id = db.insert(Source.TABLE_SOURCE_NAME, null, values);
+                    //db.close();
                     return ContentUris.withAppendedId(URI_SOURCE, _id);
                 }catch (Exception e){
                     Log.e(TAG, e.getLocalizedMessage(),e);

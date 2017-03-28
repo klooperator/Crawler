@@ -50,7 +50,7 @@ public class Source implements BaseColumns{
 
     //region Constructors
     public Source(){}
-    public Source(int id, String name, String link, int top_value, int bottom_value, int vauau){
+    public Source(String name, String link, int top_value, int bottom_value, int vauau){
         this.name=name;
         this.link=link;
         this.top_value=top_value;

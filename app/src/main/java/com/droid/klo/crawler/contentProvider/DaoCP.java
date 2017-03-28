@@ -21,13 +21,15 @@ public class DaoCP {
     //region globals
     private static final String TAG = "DaoCP";
     //private CP cp;
-    Context context;
+    private Context context;
 
     //endregion
 
     public DaoCP (Context context){
         Log.d(TAG, "Construct");
+        Log.d(TAG, context.toString());
         this.context = context;
+        ;
         //cp = context.getContentResolver();
     }
 
@@ -95,11 +97,12 @@ public class DaoCP {
             s.add(temp);
             c.moveToNext();
         }
-
+        c.close();
         return s;
     }
 
-    public List<String> getLasLinks(long sourceID){
+    public List<String> getLastLinks(long sourceID){
+        Log.d(TAG, "getLastLinks");
         List<String> s = new ArrayList<String>();
 
         Uri mTableName = CP.URI_RESULT;
@@ -109,15 +112,20 @@ public class DaoCP {
         String mSortOrder = Result.ID + " DESC";
         String mLimit = "20";
 
-        Cursor c = context.getContentResolver().query(mTableName, mProjection, mSelection, mSelctionArgs, mSortOrder + "LIMIT 20");
+        Cursor c = context.getContentResolver().query(mTableName, mProjection, mSelection, mSelctionArgs, mSortOrder + " LIMIT 20");
+        Log.d(TAG, "LastLinks COUNT="+c.getCount());
         c.moveToFirst();
         while(!c.isAfterLast()){
             s.add(c.getString(c.getColumnIndex(Result.ORIGINAL_LINK)));
+            c.moveToNext();
         }
+        c.close();
+
         return s;
     }
 
     public List<String> getExcludedList(long sourceID){
+        Log.d(TAG, "getExcludedList");
         List<String> s = new ArrayList<String>();
 
         Uri mTableName = CP.URI_EXCLUDE;
@@ -131,9 +139,36 @@ public class DaoCP {
         c.moveToFirst();
         while(!c.isAfterLast()){
             s.add(c.getString(c.getColumnIndex(ExcludeUsers.USER)));
+            c.moveToNext();
         }
 
+        c.close();
         return s;
+    }
+
+    public void insertResults(List<Result> rList){
+        Log.d(TAG, "insertResults");
+        ContentValues[] values = new ContentValues[rList.size()];
+        int count = 0;
+        for(Result r : rList){
+            values[count] = new ContentValues();
+            values[count].put(Result.CONTENT, r.getContent());
+            values[count].put(Result.LINK, r.getLink());
+            values[count].put(Result.ORIGINAL_LINK, r.getOriginalLink());
+            values[count].put(Result.PHONE_NUMBER, r.getPhone_number());
+            values[count].put(Result.SELLER, r.getSeller());
+            values[count].put(Result.PRICE,r.getPrice());
+            values[count].put(Result.SOURCE_ID,r.getSource_id());
+            values[count].put(Result.TITLE, r.getTitle());
+            values[count].put(Result.TIME, r.getTime());
+            count++;
+
+        }
+        if(context==null)Log.d(TAG, "context je null");
+        if(values==null)Log.d(TAG, "values su null");
+        int rows = context.getContentResolver().bulkInsert(CP.URI_RESULT, values);
+        Log.w(TAG, rows + " rows created");
+
     }
 
     public boolean isOpen(){
