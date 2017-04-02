@@ -171,6 +171,64 @@ public class DaoCP {
 
     }
 
+    public String getNotViewedResults(long sourceID){
+        Log.d(TAG, "getNewResults");
+
+        Uri mTableName = CP.URI_RESULT;
+        String[] mProjection = Result.resultColumns;
+        String mSelection = Result.SOURCE_ID+"=? AND "+ Result.IS_VIEWED + "=?";
+        String[] mSelctionArgs = new String[]{Long.toString(sourceID),"1"};
+        String mSortOrder = Result.ID + " DESC";
+        String mLimit = "20";
+
+        Cursor c = context.getContentResolver().query(mTableName, mProjection, mSelection, mSelctionArgs, mSortOrder);
+        String s = ""+c.getCount();
+        c.close();
+
+        return s;
+    }
+
+    public List<Result> getResults(long sourceID, int offset, int limit){
+        Log.d(TAG, "getNewResults");
+        List<Result> s = new ArrayList<Result>();
+
+        Uri mTableName = CP.URI_RESULT;
+        String[] mProjection = Result.resultColumns;
+        String mSelection = Result.SOURCE_ID+"=?";
+        String[] mSelctionArgs = new String[]{Long.toString(sourceID)};
+        String mSortOrder = Result.TIME + " DESC";
+        String mLimit = " LIMIT "+limit;
+        String mOffset = " OFFSET " + offset;
+
+        Cursor c = context.getContentResolver().query(mTableName, mProjection, mSelection, mSelctionArgs, mSortOrder + mLimit + mOffset);
+        c.moveToFirst();
+        while(!c.isAfterLast()){
+            Result r = new Result();
+            r.setIs_viewed(c.getInt(c.getColumnIndex(Result.IS_VIEWED)));
+            r.setSource_id(sourceID);
+            r.setPrice(c.getInt(c.getColumnIndex(Result.PRICE)));
+            r.setPhone_number(c.getString(c.getColumnIndex(Result.PHONE_NUMBER)));
+            r.setContent(c.getString(c.getColumnIndex(Result.CONTENT)));
+            r.setTitle(c.getString(c.getColumnIndex(Result.TITLE)));
+            r.setOriginalLink(c.getString(c.getColumnIndex(Result.ORIGINAL_LINK)));
+            r.setLink(c.getString(c.getColumnIndex(Result.LINK)));
+            r.setSeller(c.getString(c.getColumnIndex(Result.SELLER)));
+            r.setTime(c.getInt(c.getColumnIndex(Result.TIME)));
+            r.setId(c.getLong(c.getColumnIndex(Result.ID)));
+
+            s.add(r);
+            c.moveToNext();
+        }
+
+        c.close();
+
+        return s;
+    }
+
+    public void updateResultIsVIewed(long sourceId){
+
+    }
+
     public boolean isOpen(){
        return false;
     }

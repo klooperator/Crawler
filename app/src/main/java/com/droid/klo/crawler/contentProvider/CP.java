@@ -177,6 +177,44 @@ public class CP extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         Log.d(TAG, "update");
+        switch (getUriMatcher().match(uri)){
+            case RESULT_TABLE:
+                try{
+                    //Cursor c = db.query(Result.TABLE_RESULTS_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                    //db.close();
+                    return 0;
+                }catch (Exception e){
+                    Log.e(TAG, e.getLocalizedMessage(),e);
+                }
+                break;
+            case SOURCE_TABLE:
+                try{
+                    //Cursor c = db.query(Source.TABLE_SOURCE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                    //db.close();
+                    return 0;
+                }catch (Exception e){
+                    Log.e(TAG, e.getLocalizedMessage(),e);
+                }
+                break;
+            case EXCLUDE_TABLE:
+                try{
+                    //Cursor c = db.query(Source.TABLE_SOURCE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                    //db.close();
+                    return  0;
+                }catch (Exception e){
+                    Log.e(TAG, e.getLocalizedMessage(),e);
+                }
+                break;
+            case RESULT_TABLE_ID:
+
+                break;
+            case SOURCE_TABLE_ID:
+
+                break;
+            case EXCLUDE_TABLE_ID:
+
+                break;
+        }
         return 0;
     }
     //endregion

@@ -21,6 +21,7 @@ public class Result {
     private String seller;
     private String link;
     private String originalLink;
+    private int is_viewed;
 
     //table
     public static final String TABLE_RESULTS_NAME = "t_results";
@@ -36,8 +37,9 @@ public class Result {
     public static final String TIME = "result_time"; //text
     public static final String ORIGINAL_LINK = "original_link";
     public static final String LINK = "link";
+    public static final String IS_VIEWED = "is_viewed";
 
-    public static final String[] resultColumns = {ID,SOURCE_ID, PHONE_NUMBER, TITLE, CONTENT,PRICE,SELLER,TIME, ORIGINAL_LINK, LINK};
+    public static final String[] resultColumns = {ID,SOURCE_ID, PHONE_NUMBER, TITLE, CONTENT,PRICE,SELLER,TIME, ORIGINAL_LINK, LINK, IS_VIEWED};
 
     //create statements
     public static final String CREATE_TABLE_RESULTS =
@@ -52,6 +54,7 @@ public class Result {
                     TIME + " INT, " +
                     ORIGINAL_LINK + " TEXT, "+
                     LINK + " TEXT, " +
+                    IS_VIEWED + " INTEGER, " +
                     "FOREIGN KEY (" + SOURCE_ID + ") REFERENCES " + Source.TABLE_SOURCE_NAME + "(" +Source.ID + ")" +
                     ");";
     //endregion
@@ -139,5 +142,13 @@ public class Result {
         this.originalLink = originalLink;
     }
 
-//endregion
+    public int getIs_viewed() {
+        return is_viewed;
+    }
+
+    public void setIs_viewed(int is_viewed) {
+        this.is_viewed = is_viewed;
+    }
+
+    //endregion
 }

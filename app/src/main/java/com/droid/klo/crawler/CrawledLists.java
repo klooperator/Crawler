@@ -1,14 +1,18 @@
 package com.droid.klo.crawler;
 
 import android.app.Fragment;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.droid.klo.crawler.contentProvider.DaoCP;
 import com.droid.klo.crawler.db.Source;
@@ -25,17 +29,20 @@ public class CrawledLists extends Fragment {
     //region globals
     private static String TAG = "CrawledList";
     public int bttn_count;
+    DaoCP dao;
+    LinearLayout ll;
     //endregion
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.v(TAG,"onCreateView");
-        View view = inflater.inflate(R.layout.latest_list,container, false);
+        View view = inflater.inflate(R.layout.source_list,container, false);
         //view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
 		((MainActivity)getActivity()).dissableToolbarBack();
+        ll = (LinearLayout) getActivity().findViewById(R.id.layout_search_list);
         bttn_count = 0;
-
+        dao = new DaoCP(getActivity());
         return view;
     }
 
@@ -52,11 +59,11 @@ public class CrawledLists extends Fragment {
             }
         });
 
-        DaoCP dao = new DaoCP(getActivity());
+
         List<Source> sources = dao.getSources();
         for(Iterator<Source> i = sources.iterator(); i.hasNext();){
             Source s = i.next();
-            addButton(s.getName());
+            addButton(s.getName(), s.getId());
         }
 		
 
@@ -68,8 +75,66 @@ public class CrawledLists extends Fragment {
         super.onStart();
     }
 
-    public void addButton(String text){
-        Button bttn = new Button(getActivity());
+    public void addButton(final String text, final long sourceID){
+        Log.d(TAG, "addButton");
+
+        RelativeLayout rl = new RelativeLayout(getActivity());
+        rl.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
+        RelativeLayout.LayoutParams rlParams = (RelativeLayout.LayoutParams) rl.getLayoutParams();
+        rlParams.setMargins(0,5,0,5);
+        GradientDrawable border = new GradientDrawable();
+        border.setColor(0xFFFFFFFF); //white background
+        border.setStroke(1, 0xFF000000); //black border with full opacity
+        rl.setBackground(border);
+        rl.setLayoutParams(rlParams);
+
+        TextView sName = new TextView(getActivity());
+        sName.setText(text);
+        sName.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
+        RelativeLayout.LayoutParams sNameParams = (RelativeLayout.LayoutParams) sName.getLayoutParams();
+        sNameParams.addRule(RelativeLayout.ALIGN_PARENT_START);
+
+        sName.setLayoutParams(sNameParams);
+        sName.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
+        sName.setId(View.generateViewId());
+
+
+        TextView sCount = new TextView(getActivity());
+        String notViewedCount = dao.getNotViewedResults(sourceID);
+        if(notViewedCount == null || notViewedCount.contentEquals(""))notViewedCount="0";
+        sCount.setText(notViewedCount);
+        sCount.setId(View.generateViewId());
+        sCount.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
+        RelativeLayout.LayoutParams sCountParams = (RelativeLayout.LayoutParams) sCount.getLayoutParams();
+        sCountParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        sCountParams.addRule(RelativeLayout.ALIGN_BOTTOM, sName.getId());
+        sCount.setLayoutParams(sCountParams);
+        sCount.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+
+
+
+        rl.addView(sName);
+        rl.addView(sCount);
+        rl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Bundle b = new Bundle();
+
+                b.putLong("source_id", sourceID);
+                b.putString("source_name", text);
+                ListData ld = new ListData();
+                ld.setArguments(b);
+                getActivity().getFragmentManager().beginTransaction().replace(R.id.placeholder, ld, "ld_" + text).addToBackStack("ld_" + text).commit();
+                ((MainActivity)getActivity()).addBackButton();
+            }
+        });
+
+        Log.i(TAG, "rl = = = "+rl.toString());
+        if(ll == null)ll = (LinearLayout) getActivity().findViewById(R.id.layout_search_list);
+        this.ll.addView(rl, 0);
+
+        /*Button bttn = new Button(getActivity());
         bttn.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         bttn.setText(text);
         bttn.setOnClickListener(new View.OnClickListener() {
@@ -85,7 +150,7 @@ public class CrawledLists extends Fragment {
         });
         LinearLayout ll = (LinearLayout) getActivity().findViewById(R.id.layout_search_list);
         ll.addView(bttn, 0);
-        bttn_count++;
+        bttn_count++;*/
     }
 
 	@Override
@@ -98,28 +163,4 @@ public class CrawledLists extends Fragment {
 	
 	
 }
-//region tab init
-       /* TabHost host = (TabHost)getActivity().findViewById(R.id.tabHost_lists);
-        host.setup();
 
-        for(int i=0; i<5;i++){
-            TabHost.TabSpec spec = host.newTabSpec("Tab"+i);
-            ListView list = new ListView(getActivity());
-            spec.setContent((TabHost.TabContentFactory) list);
-            spec.setIndicator("Tab"+i);
-            host.addTab(spec);
-        }
-        //Tab 1
-        TabHost.TabSpec spec = host.newTabSpec("Tab One");
-        ListView list = new ListView(getActivity());
-        //spec.setContent(R.id.tab2);
-        spec.setIndicator("Tab One");
-        host.addTab(spec);
-
-        //Tab 2
-        spec = host.newTabSpec("Tab Two");
-        //spec.setContent(R.id.tab2);
-        spec.setIndicator("Tab Two");
-        host.addTab(spec);*/
-
-//endregion

@@ -15,7 +15,7 @@ public class DBHelper extends SQLiteOpenHelper {
     //region class variables
     private static final String TAG = "DBHelper";
 
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 3;
     public static final String DB_NAME = "klo_crawler_db";
 
 

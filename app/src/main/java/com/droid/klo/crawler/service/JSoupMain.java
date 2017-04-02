@@ -169,7 +169,8 @@ public class JSoupMain implements Runnable {
 
                     Result r = new Result();
 
-                    r.setPhone_number(phoneEl.text());
+                    if(phoneEl != null)r.setPhone_number(phoneEl.text());
+                    else r.setPhone_number("N/A");
                     r.setPrice(Integer.parseInt(priceEl.text().replaceAll("\\D+", "")));
                     r.setTitle(titleEl.text());
                     r.setSeller(sellerEl.text());
@@ -178,6 +179,7 @@ public class JSoupMain implements Runnable {
                     r.setOriginalLink(link);
                     r.setSource_id(this.source.getId());
                     r.setTime(System.currentTimeMillis());
+                    r.setIs_viewed(0);
 
                     Log.v(TAG, source.getName() + " :" + r.getLink() + "[" + r.getTitle() + "]");
                     Log.i(TAG, r.getSeller() + " [" + r.getPhone_number() + "]");

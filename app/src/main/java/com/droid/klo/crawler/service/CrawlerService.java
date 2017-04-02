@@ -80,7 +80,7 @@ public class CrawlerService extends Service {
                         handler.postDelayed(r, 20000*count);
                         count++;
                     }
-                    handler.postDelayed(this, 60*1000);
+                    handler.postDelayed(this, runTime*60*1000);
                 }else{
                     initService();
                 }
